@@ -110,6 +110,21 @@ footer{background:#0a0a0a;color:#fff;border-radius:2.5rem 2.5rem 0 0;overflow:hi
 .themecard{border:1px solid #e5e5e5;border-radius:12px;padding:16px;cursor:pointer;margin:10px 0;display:flex;justify-content:space-between;align-items:center}
 .themecard.selected{background:#0a0a0a;color:#fff;transform:scale(1.02)}
 .swatch{width:12px;height:12px;border-radius:99px;display:inline-block}
+.dest-gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0 4px}
+@media(min-width:768px){.dest-gallery{grid-template-columns:repeat(3,1fr)}}
+.dest-card{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.6);cursor:pointer;padding:0;text-align:left;background:#0a0a0a;box-shadow:0 10px 30px -12px rgba(14,42,197,.25);transition:transform .2s}
+.dest-card:hover{transform:translateY(-3px)}
+.dest-card img{width:100%;height:132px;object-fit:cover;display:block}
+.dest-card.active{outline:3px solid #0E2AC5;outline-offset:2px}
+.dest-meta{position:absolute;left:0;right:0;bottom:0;padding:30px 12px 10px;background:linear-gradient(to top,rgba(0,0,0,.78),transparent);color:#fff}
+.dest-meta strong{display:block;font-family:var(--font-raleway);font-size:16px}
+.dest-meta span{font-size:12px;opacity:.92}
+.how-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:20px}
+@media(min-width:768px){.how-grid{grid-template-columns:repeat(4,1fr)}}
+.how-card{background:rgba(255,255,255,.25);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.55);border-radius:18px;padding:16px}
+.how-card strong{font-family:var(--font-raleway);display:block;margin-bottom:6px}
+.how-card p{font-size:13px;line-height:1.5;color:#404040;margin:0}
+.form-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start;margin-bottom:4px}
 </style></head>
 <body>
 <div id="bgLayer"></div>
@@ -119,8 +134,10 @@ footer{background:#0a0a0a;color:#fff;border-radius:2.5rem 2.5rem 0 0;overflow:hi
 <div id="scrim"></div>
 <aside id="drawer"><div style="display:flex;justify-content:space-between;align-items:center"><strong style="font-family:var(--font-display);letter-spacing:.2em;font-size:14px">STUDIO CONTROLS</strong><button class="iconbtn" id="closeDrawer" aria-label="Close">✕</button></div><p style="font-family:var(--font-mono);font-size:12px;color:#a3a3a3;font-style:italic">Set the hero sphere palette. As you scroll, the scene morphs to volt-lime, then rose-pink as the heart assembles.</p><p style="font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;font-weight:700">✦ HERO PALETTE SHADERS</p><div id="themeCards"></div><p style="font-family:var(--font-mono);font-size:9px;color:#a3a3a3">RENDER ENGINE / THREE.JS WEBGL<br>DYNAMICS SOLVER / 3D COLLISION VERLET</p><button class="btn2" id="resetTheme">↺ Reset Defaults</button></aside>
 <main>
-<section class="hero" id="planner"><div class="hero-row"><div><div class="eyebrow">[ Digital studio ]</div><h1 class="hero-title">Less noise.<br>More gravity.</h1><div style="margin-top:18px"><span class="version">Quadlet Gravity v1</span></div></div><div class="hero-side"><p>We design digital experiences that remove distraction and amplify presence.</p><div class="mono" style="margin-top:20px">© 2026 — Independent digital agency</div><div class="scrollcue">↓ <span class="mono" style="letter-spacing:.2em">Scroll</span></div></div></div>
+<section class="hero" id="planner"><div class="hero-row"><div><div class="eyebrow">[ Quadlet · Trip Planner ]</div><h1 class="hero-title">One trip.<br>Four agents. One plan.</h1><div style="margin-top:18px"><span class="version">Quadlet Gravity v1.2</span></div></div><div class="hero-side"><p>Tell Quadlet where, when, with how many people, and how much you can spend. Four agents work in parallel, then merge into one day-wise plan — with every budget cut shown, not hidden.</p><div class="mono" style="margin-top:20px">4 agents · 6 researched places · Honest budgets</div><div class="scrollcue">↓ <span class="mono" style="letter-spacing:.2em">Scroll</span></div></div></div>
 <form id="tripForm" class="card" style="margin-top:32px;pointer-events:auto" autocomplete="off">
+<div class="form-head"><div><h2 style="font-size:26px;margin:0">Plan your trip</h2><p style="font-family:var(--font-raleway);font-size:15px;line-height:1.5;color:#404040;margin:8px 0 0;max-width:34rem">Pick a researched destination below, or type anywhere you like. Unknown places get a clearly labelled skeleton plan — never invented prices.</p></div><div class="mono" style="align-self:center">6 researched places · 4 agents · 1 merged plan</div></div>
+<div class="dest-gallery" id="destGallery"></div>
 <div><label for="dest">Destination</label><input id="dest" required maxlength="80" placeholder="Type any destination" value="Goa"><div class="chips" id="chips"></div></div>
 <div class="formgrid">
 <div><label for="start">Start date</label><input type="date" id="start" required value="2026-12-10"></div>
@@ -133,7 +150,15 @@ footer{background:#0a0a0a;color:#fff;border-radius:2.5rem 2.5rem 0 0;overflow:hi
 <div style="margin-top:16px"><label>Interests</label><div class="pills" id="interests"></div></div>
 <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="planBtn" type="submit">Plan my trip</button><span class="fine" style="align-self:center">Prices are estimates, not live bookable prices. Nothing here books or charges anything.</span></div>
 <p class="err" id="formErr" hidden></p>
-</form></section>
+</form>
+<div class="how-grid">
+<div class="how-card"><strong>🔍 Destination Researcher</strong><p>Finds real places, hidden gems, the best season, and how to get around — matched to your interests.</p></div>
+<div class="how-card"><strong>💰 Budget Planner</strong><p>Scales real per-day costs by travellers and days, then cuts openly if you are over budget.</p></div>
+<div class="how-card"><strong>🗓️ Itinerary Builder</strong><p>Turns the shortlist into a day-wise plan, max 3 stops a day, with realistic transfer times.</p></div>
+<div class="how-card"><strong>🎒 Safety &amp; Packing Checker</strong><p>Weather, safety tips, documents, and a packing list grouped by Essentials, Clothes, Tech and Documents.</p></div>
+</div>
+<p class="fine" style="margin-top:14px">Destination photos: real photographs via Pexels. Prices are estimates, not live bookable prices. Nothing here books or charges anything.</p>
+</section>
 
 <section id="agents"><h2 class="reveal" style="font-size:32px;margin:0">Agent Arena</h2><p class="lead reveal">Four agents work separately, in parallel. Watch each one think, act, and observe — then the Synthesizer merges them into one plan.</p><div class="agents" id="agentCards"></div><div class="synth" id="synthStatus">Synthesizer: waiting for the four agents</div></section>
 
@@ -236,11 +261,11 @@ new ResizeObserver(handleResize).observe(container);window.addEventListener('res
 let loaderValue=0,loaderDone=false;const loaderFill=document.getElementById('loaderFill'),loaderCount=document.getElementById('loaderCount'),loaderStatus=document.getElementById('loaderStatus'),loaderEl=document.getElementById('loader');let lastLoader=performance.now();
 function loaderTick(now){if(loaderDone)return;const dt=Math.min(0.05,(now-lastLoader)/1000);lastLoader=now;const ready=!!window.__quadletReady;const ceiling=ready?100:92;const rate=ready?6:1.7;loaderValue+=(ceiling-loaderValue)*rate*dt;if(ready&&loaderValue>=99.4)loaderValue=100;loaderFill.style.width=loaderValue+'%';loaderCount.textContent=String(Math.floor(loaderValue)).padStart(3,'0')+'%';loaderStatus.textContent=loaderValue>=100?'Entering orbit':'Calibrating gravity field';if(loaderValue>=99.9&&ready){loaderDone=true;setTimeout(()=>{loaderEl.classList.add('leaving');},140);setTimeout(()=>{control.started=true;document.body.classList.add('revealed');loaderEl.style.display='none';},660);return;}requestAnimationFrame(loaderTick);}
 requestAnimationFrame(loaderTick);
-// Smooth scroll (Lenis-style vanilla, lerp 0.09)
-let scrollTarget=window.scrollY,scrollingProgram=false;
-window.addEventListener('wheel',e=>{if(e.target&&e.target.closest&&e.target.closest('input,select,textarea'))return;e.preventDefault();const max=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);scrollTarget=Math.min(max,Math.max(0,scrollTarget+e.deltaY*1));},{passive:false});
-window.addEventListener('scroll',()=>{if(!scrollingProgram)scrollTarget=window.scrollY;},{passive:true});
-(function smoothLoop(){const diff=scrollTarget-window.scrollY;if(Math.abs(diff)>0.5){scrollingProgram=true;window.scrollTo(0,window.scrollY+diff*0.09);setTimeout(()=>scrollingProgram=false,50);}requestAnimationFrame(smoothLoop);})();
+// Fast scroll (v1.1 fix): native scrolling, no wheel interception.
+// The old Lenis-style loop moved only 9% of the remaining distance per
+// frame, so every scroll took 1-2s to settle and queued wheel notches
+// piled up behind it. Native scroll responds instantly, and the bubble
+// physics below still read window.scrollY, so sphere movement is unchanged.
 // Scroll progress + background stage
 function updateProgress(){const vh=window.innerHeight||1;const progress=window.scrollY/vh;control.progress=progress;const stage=progress>1.55?2:progress>0.7?1:0;bgLayer.classList.remove('stage1','stage2');if(stage===1)bgLayer.classList.add('stage1');if(stage===2)bgLayer.classList.add('stage2');}
 window.addEventListener('scroll',updateProgress,{passive:true});window.addEventListener('resize',updateProgress);updateProgress();
@@ -261,7 +286,18 @@ const agentCardsEl=document.getElementById('agentCards');
 AGENTS.forEach((name,i)=>{const d=document.createElement('div');d.className='agentcard';d.id='agent-'+(i+1);d.innerHTML=`<div class="agenthead"><strong style="font-family:var(--font-raleway)">${name}</strong><span class="status" id="status-${i+1}">Waiting</span></div><div class="logs" id="logs-${i+1}"></div>`;agentCardsEl.appendChild(d);});
 function setStatus(i,txt){const el=document.getElementById('status-'+i);if(!el)return;el.textContent=txt;el.className='status '+(txt==='Done'?'done':txt==='Failed'?'failed':txt==='Working'?'working':'');}
 function addLog(i,t,a,o){const el=document.getElementById('logs-'+i);if(!el)return;const div=document.createElement('div');div.className='logline';div.textContent=`Thought: ${t} | Action: ${a} | Observation: ${o}`;el.appendChild(div);el.scrollTop=el.scrollHeight;}
-const chipsEl=document.getElementById('chips');['Goa','Manali','Jaipur','Kerala','Bali','Dubai'].forEach(c=>{const b=document.createElement('button');b.type='button';b.className='chip'+(c==='Goa'?' active':'');b.textContent=c;b.addEventListener('click',()=>{document.getElementById('dest').value=c;chipsEl.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');});chipsEl.appendChild(b);});
+const chipsEl=document.getElementById('chips');['Goa','Manali','Jaipur','Kerala','Bali','Dubai'].forEach(c=>{const b=document.createElement('button');b.type='button';b.className='chip'+(c==='Goa'?' active':'');b.textContent=c;b.addEventListener('click',()=>{document.getElementById('dest').value=c;chipsEl.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('#destGallery .dest-card').forEach(x=>x.classList.toggle('active',x.dataset.dest===c));});chipsEl.appendChild(b);});
+const destGallery=document.getElementById('destGallery');
+[['Goa','Beaches, food & sunsets','https://images.pexels.com/photos/1078983/pexels-photo-1078983.jpeg?auto=compress&cs=tinysrgb&w=800'],
+['Manali','Mountains & adventure','https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg?auto=compress&cs=tinysrgb&w=800'],
+['Jaipur','Palaces & history','https://images.pexels.com/photos/1603650/pexels-photo-1603650.jpeg?auto=compress&cs=tinysrgb&w=800'],
+['Kerala','Backwaters & nature','https://images.pexels.com/photos/962464/pexels-photo-962464.jpeg?auto=compress&cs=tinysrgb&w=800'],
+['Bali','Temples & rice terraces','https://images.pexels.com/photos/2166559/pexels-photo-2166559.jpeg?auto=compress&cs=tinysrgb&w=800'],
+['Dubai','Skyline & shopping','https://images.pexels.com/photos/3787839/pexels-photo-3787839.jpeg?auto=compress&cs=tinysrgb&w=800']].forEach(([name,tag,img])=>{
+const b=document.createElement('button');b.type='button';b.className='dest-card'+(name==='Goa'?' active':'');b.dataset.dest=name;
+b.innerHTML=`<img src="${img}" alt="${name}" loading="lazy" onerror="this.style.display='none'"><div class="dest-meta"><strong>${name}</strong><span>${tag}</span></div>`;
+b.addEventListener('click',()=>{document.getElementById('dest').value=name;chipsEl.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active',x.textContent===name));destGallery.querySelectorAll('.dest-card').forEach(x=>x.classList.toggle('active',x.dataset.dest===name));});
+destGallery.appendChild(b);});
 const interestsEl=document.getElementById('interests');const selectedInterests=new Set(['Beaches','Food']);
 ['Beaches','Mountains','History','Food','Shopping','Nightlife','Nature','Adventure Sports'].forEach(c=>{const b=document.createElement('button');b.type='button';b.className='pill'+(selectedInterests.has(c)?' active':'');b.textContent=c;b.addEventListener('click',()=>{if(selectedInterests.has(c)){selectedInterests.delete(c);b.classList.remove('active');}else{selectedInterests.add(c);b.classList.add('active');}});interestsEl.appendChild(b);});
 let lastPlan=null,lastReq=null,countTimer=null;
