@@ -12,7 +12,7 @@ from data import D, USD, GEN_DOCS
 VERSION = "Quadlet v1"
 TIERS = ["Budget", "Mid-range", "Comfort"]
 BANNER = "This destination uses estimated data — verify prices and places before booking."
-NAMES = {1: "Destination Researcher", 2: "Budget Planner", 3: "Itinerary Builder", 4: "Safety & Packing Checker"}
+NAMES = {1: "🧭 Scout — Destination Researcher", 2: "🪙 Penny — Budget Planner", 3: "🗺️ Atlas — Itinerary Builder", 4: "🛡️ Pax — Safety & Packing Checker"}
 SECTIONS = {1: ["places"], 2: ["budget"], 3: ["itinerary"], 4: ["packing", "safety"]}
 SLOT_TIME = {"Morning": "9:00 – 12:30", "Afternoon": "1:30 – 5:30", "Evening": "6:30 – 9:30"}
 SHARE = {"Travel": (.25, .35), "Stay": (.25, .30), "Food": (.15, .20), "Activities": (.08, .12), "Local Transport": (.05, .08), "Miscellaneous": (.05, .08)}
