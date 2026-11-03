@@ -3,6 +3,8 @@
 <title>Quadlet Trip Planner — Gravity</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&family=Raleway:wght@400;500;600;700;900&family=Playfair+Display:ital,wght@1,500;1,600;1,700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}</script>
 <style>
 :root{--font-sans:"Inter",sans-serif;--font-display:"Space Grotesk",sans-serif;--font-mono:"JetBrains Mono",monospace;--font-raleway:"Raleway",sans-serif;--blue:#0E2AC5;--blue2:#2F69FF}
@@ -134,6 +136,11 @@ footer{background:#0a0a0a;color:#fff;border-radius:2.5rem 2.5rem 0 0;overflow:hi
 .quote-author{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#737373;margin:0}
 @media print{body{background:#fff!important}body *{visibility:hidden}#plan,#plan *{visibility:visible}#plan{position:absolute;left:0;top:0;width:100%;background:#fff!important;color:#000!important}#planOut{background:#fff!important;color:#000!important;box-shadow:none!important;border:none!important}#plan .btn2,#plan details{display:none!important}#plan a{color:#000!important}}
 .pack-item{display:flex;gap:8px;align-items:flex-start;margin:6px 0;cursor:pointer}.pack-item input{accent-color:#ff6b00;width:18px;height:18px;margin-top:2px;flex:none}.pack-item.done span{opacity:.55;text-decoration:line-through}
+.leaflet-container{font:inherit;z-index:1}
+.mili-msg{max-width:88%;padding:10px 12px;border-radius:12px;font-size:14px;line-height:1.45;white-space:pre-line}
+.mili-user{align-self:flex-end;background:#0E2AC5;color:#fff}
+.mili-bot{align-self:flex-start;background:#eef2ff;color:#111}
+.mili-chip{border:1px solid rgba(14,42,197,.3);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;cursor:pointer}
 </style></head>
 <body>
 <div id="bgLayer"></div>
@@ -143,7 +150,7 @@ footer{background:#0a0a0a;color:#fff;border-radius:2.5rem 2.5rem 0 0;overflow:hi
 <div id="scrim"></div>
 <aside id="drawer"><div style="display:flex;justify-content:space-between;align-items:center"><strong style="font-family:var(--font-display);letter-spacing:.2em;font-size:14px">STUDIO CONTROLS</strong><button class="iconbtn" id="closeDrawer" aria-label="Close">✕</button></div><p style="font-family:var(--font-mono);font-size:12px;color:#a3a3a3;font-style:italic">Set the hero sphere palette. As you scroll, the scene morphs to volt-lime, then rose-pink as the heart assembles.</p><p style="font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;font-weight:700">✦ HERO PALETTE SHADERS</p><div id="themeCards"></div><p style="font-family:var(--font-mono);font-size:9px;color:#a3a3a3">RENDER ENGINE / THREE.JS WEBGL<br>DYNAMICS SOLVER / 3D COLLISION VERLET</p><button class="btn2" id="resetTheme">↺ Reset Defaults</button></aside>
 <main>
-<section class="hero" id="planner"><div class="hero-row"><div><div class="eyebrow">[ Quadlet · Trip Planner ]</div><h1 class="hero-title">One trip.<br>Four agents. One plan.</h1><div style="margin-top:18px"><span class="version">Quadlet Gravity v1.9</span></div></div><div class="hero-side"><p>Tell Quadlet where, when, with how many people, and how much you can spend. Four agents work in parallel, then merge into one day-wise plan — with every budget cut shown, not hidden.</p><div class="mono" style="margin-top:20px">4 agents · 6 researched places · Honest budgets</div><div class="scrollcue">↓ <span class="mono" style="letter-spacing:.2em">Scroll</span></div></div></div>
+<section class="hero" id="planner"><div class="hero-row"><div><div class="eyebrow">[ Quadlet · Trip Planner ]</div><h1 class="hero-title">One trip.<br>Four agents. One plan.</h1><div style="margin-top:18px"><span class="version">Quadlet Gravity v2.0</span></div></div><div class="hero-side"><p>Tell Quadlet where, when, with how many people, and how much you can spend. Four agents work in parallel, then merge into one day-wise plan — with every budget cut shown, not hidden.</p><div class="mono" style="margin-top:20px">4 agents · 6 researched places · Honest budgets</div><div class="scrollcue">↓ <span class="mono" style="letter-spacing:.2em">Scroll</span></div></div></div>
 <form id="tripForm" class="card" style="margin-top:32px;pointer-events:auto" autocomplete="off">
 <div class="form-head"><div><h2 style="font-size:26px;margin:0">Plan your trip</h2><p style="font-family:var(--font-raleway);font-size:15px;line-height:1.5;color:#404040;margin:8px 0 0;max-width:34rem">Pick a researched destination below, or type anywhere you like. Unknown places get a clearly labelled skeleton plan — never invented prices.</p></div><div class="mono" style="align-self:center">6 researched places · 4 agents · 1 merged plan</div></div>
 <div class="dest-gallery" id="destGallery"></div>
@@ -181,6 +188,10 @@ footer{background:#0a0a0a;color:#fff;border-radius:2.5rem 2.5rem 0 0;overflow:hi
 <div class="card"><h3>Estimated per-day spend</h3><p class="fine">Derived from the final budget: travel on day 1, stay per night, food and transport per day, activities spread across middle days, miscellaneous spread evenly. Estimates only.</p><div id="dayGraph"></div></div>
 <div class="card"><h3>Daily itinerary timeline</h3><div class="timeline" id="timeline"></div></div></div></section>
 
+<section id="weatherMap"><h2 class="reveal" style="font-size:32px;margin:0">Live weather &amp; day-wise map</h2><p class="lead reveal">Live weather from Open-Meteo (free, no key, no sign-in). Forecasts only cover the next 16 days, so far-future trips show the current outlook instead — honestly labelled, never invented.</p>
+<div class="card" style="margin-top:20px"><h3 style="font-family:var(--font-raleway)" id="wmTitle">Plan a trip to see its weather &amp; map</h3><p class="fine" id="wmNote">Run a trip above and this section fills with live weather for that destination.</p><div id="wmCurrent"></div><div id="wmDays" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"></div></div>
+<div class="card" style="margin-top:16px"><h3>Day-wise map</h3><p class="fine" id="mapNote">Pins appear for itinerary stops that can be located. Unlocated stops stay in your day-wise plan above.</p><div id="tripMap" style="height:380px;border-radius:12px;overflow:hidden;background:#e5e7eb"></div><p class="fine">Map: OpenStreetMap via Leaflet. Pins are approximate locations for the named stops, not exact addresses.</p></div></section>
+
 <section id="physics"><div class="grid12"><div class="col7"><div class="reveal" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:rgba(14,42,197,.8)">[ 02 — Agents ]</div><h2 class="big reveal" style="transition-delay:.1s">When four minds<br>work at once.</h2><p class="lead reveal" style="transition-delay:.2s;margin-top:32px">Keep scrolling and the field surrenders to gravity — just like Quadlet's agents surrender a single trip to four specialists. Researcher, budget planner, itinerary builder and safety checker each work on their own job, in parallel, until the energy finally settles into one merged plan.</p></div><div class="col5 reveal" style="transition-delay:.25s"><div class="statcards">
 <div class="stat"><div class="stat-in"><div class="stathead"><span>01</span><span>Parallel</span><span class="dot"></span></div><div class="statval">4 agents · 1 goal</div><p class="statdesc">No agent waits for another. They run at the same time and file separate reports.</p></div></div>
 <div class="stat"><div class="stat-in"><div class="stathead"><span>02</span><span>Synthesizer</span><span class="dot"></span></div><div class="statval">Conflict rule · open cuts</div><p class="statdesc">Over budget? Priciest activities go first, then stay steps down, then food goes local-first.</p></div></div>
@@ -196,6 +207,13 @@ footer{background:#0a0a0a;color:#fff;border-radius:2.5rem 2.5rem 0 0;overflow:hi
 <div class="footgrid"><div class="footcta"><div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.4)">[ Let's collaborate ]</div><h2 style="color:#fff;font-size:36px;line-height:.95;margin:20px 0">Have an idea<br>with real weight?</h2><div class="emailpill">hello@quadlet.app <span class="orb" style="width:40px;height:40px">↗</span></div><p class="fine" style="color:rgba(255,255,255,.5)">This is a label only, not a booking or contact form.</p></div>
 <div class="footlinks"><div><div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.25em;color:rgba(255,255,255,.4)">PLANNER</div><a href="#planner">Planner</a><a href="#agents">Agents</a><a href="#dashboard">Dashboard</a><a href="#saved">Saved</a></div><div><div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.25em;color:rgba(255,255,255,.4)">AGENTS</div><a href="#agents">🧭 Scout</a><a href="#agents">🪙 Penny</a><a href="#agents">🗺️ Atlas</a><a href="#agents">🛡️ Pax</a></div><div><div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.25em;color:rgba(255,255,255,.4)">QUADLET</div><a href="#physics">How it works</a><a href="#formsec">Synthesis</a><a href="#release">Release</a><a href="#planner">Start a trip</a></div></div></div>
 <div class="bottombar"><div><span style="font-family:var(--font-display);font-weight:900;letter-spacing:.22em">QUADLET</span> <span style="color:#2f69ff">●</span> <span style="font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,.4)">© 2026 Quadlet — All rights reserved.</span></div><div><button class="socbtn">𝕏</button><button class="socbtn">◎</button><button class="socbtn">in</button></div></div></footer>
+<button id="miliBtn" style="position:fixed;right:18px;bottom:18px;z-index:90;border:none;border-radius:999px;padding:14px 18px;background:#0E2AC5;color:#fff;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.25);cursor:pointer">💬 Chat with Mili</button>
+<div id="miliPanel" style="position:fixed;right:18px;bottom:78px;z-index:90;width:min(360px,calc(100vw - 36px));max-height:520px;display:none;flex-direction:column;background:#fff;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,.3);overflow:hidden">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#0E2AC5;color:#fff"><strong>💬 Mili — your trip helper</strong><button id="miliClose" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer">×</button></div>
+<div id="miliMsgs" style="padding:12px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:8px;min-height:200px"></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap;padding:0 12px 8px"><button class="mili-chip" data-q="How does Quadlet work?">How does Quadlet work?</button><button class="mili-chip" data-q="What is my budget?">My budget?</button><button class="mili-chip" data-q="What should I pack?">Packing?</button><button class="mili-chip" data-q="Show my itinerary">Itinerary</button><button class="mili-chip" data-q="What is the weather?">Weather?</button></div>
+<form id="miliForm" style="display:flex;gap:8px;padding:12px;border-top:1px solid #e5e7eb"><input id="miliInput" style="flex:1;padding:10px;border:1px solid #d1d5db;border-radius:10px" placeholder="Ask Mili about your trip…"><button style="border:none;border-radius:10px;padding:10px 14px;background:#0E2AC5;color:#fff;font-weight:700;cursor:pointer">Send</button></form>
+</div>
 <script type="module">
 import * as THREE from 'three';
 const container=document.getElementById('webgl'), canvas=document.getElementById('scene');
@@ -337,7 +355,7 @@ const packKey='quadlet_packing_'+((p.summary?p.summary.destination+'|'+p.summary
 const updatePack=()=>{const all=[...document.querySelectorAll('.pack-check')];const done=all.filter(c=>c.checked).length;const txt=document.getElementById('packProgressText');if(txt)txt.textContent=all.length?`${done} of ${all.length} packed`:'No packing items in this plan.';const fill=document.getElementById('packBarFill');if(fill)fill.style.width=(all.length?Math.round(done/all.length*100):0)+'%';all.forEach(c=>c.closest('.pack-item').classList.toggle('done',c.checked));try{localStorage.setItem(packKey,JSON.stringify(all.map(c=>c.checked)));}catch(e){}};
 try{const saved=JSON.parse(localStorage.getItem(packKey)||'[]');document.querySelectorAll('.pack-check').forEach((c,i)=>{if(saved[i])c.checked=true;});}catch(e){}
 document.querySelectorAll('.pack-check').forEach(c=>c.addEventListener('change',updatePack));updatePack();
-renderDashboard(p);savePlan(p);}
+renderDashboard(p);savePlan(p);renderWeatherMap(p);}
 function parseMoney(s){if(!s)return 0;const n=String(s).replace(/[^0-9.]/g,'');return parseFloat(n)||0;}
 function renderDashboard(p){const bars=document.getElementById('budgetBars');let rows=[];if(p.budget&&p.budget.rows)rows=p.budget.rows.filter(r=>r[0]!=='Total');const total=parseMoney(p.summary?p.summary.total:'')||rows.reduce((a,r)=>a+parseMoney(r[1]),0)||1;
 bars.innerHTML=rows.map(r=>{const v=parseMoney(r[1]);const pct=Math.round(v/total*100);return `<div class="bar-row"><div class="bar-label"><span>${esc(r[0])}</span><span>${esc(r[1])} · ${pct}%</span></div><div class="bar-track"><div class="bar-fill" data-pct="${pct}"></div></div></div>`;}).join('');
@@ -358,6 +376,86 @@ function renderSaved(){const el=document.getElementById('savedList');const note=
 renderSaved();
 function animateHero(){if(!window.anime)return;anime({targets:'.hero-row>div, #tripForm, #destGallery .dest-card, .how-card',opacity:[0,1],translateY:[24,0],duration:800,delay:anime.stagger(90),easing:'easeOutExpo',complete:function(){document.querySelectorAll('.hero-row>div, #tripForm, #destGallery .dest-card, .how-card').forEach(el=>{el.style.transform='';el.style.opacity='';});}});}
 const qtEl=document.querySelector('.quote-text');if(qtEl&&window.anime){const qwords=qtEl.textContent.split(' ');qtEl.innerHTML=qwords.map(w=>`<span style="display:inline-block;opacity:0">${w}</span>`).join(' ');const qio=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){anime({targets:'.quote-text span',opacity:[0,1],translateY:[14,0],duration:700,delay:anime.stagger(90),easing:'easeOutExpo'});qio.disconnect();}})},{threshold:0.4});qio.observe(qtEl);}
+// Live weather (Open-Meteo, free, no key) + day-wise map (Leaflet + OSM)
+const DEST_COORDS={goa:[15.2993,74.1240],manali:[32.2396,77.1887],jaipur:[26.9124,75.7873],kerala:[9.9312,76.2673],bali:[-8.3405,115.0920],dubai:[25.2048,55.2708]};
+function wmo(code){if(code===0)return['☀️','Clear sky'];if(code===1)return['🌤️','Mainly clear'];if(code===2)return['⛅','Partly cloudy'];if(code===3)return['☁️','Overcast'];if(code===45||code===48)return['🌫️','Fog'];if(code>=51&&code<=57)return['🌦️','Drizzle'];if(code>=61&&code<=67)return['🌧️','Rain'];if(code>=71&&code<=77)return['🌨️','Snow'];if(code>=80&&code<=82)return['🌧️','Rain showers'];if(code>=95)return['⛈️','Thunderstorm'];return['🌡️','—'];}
+async function geoSearch(q){try{const r=await fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=1&language=en&format=json');const j=await r.json();if(j.results&&j.results[0])return[j.results[0].latitude,j.results[0].longitude,j.results[0].name];}catch(e){}return null;}
+let lastWeather=null;let quadletMap=null;
+async function renderWeatherMap(p){
+const dest=p.summary?p.summary.destination:'';const title=document.getElementById('wmTitle'),note=document.getElementById('wmNote'),cur=document.getElementById('wmCurrent'),daysEl=document.getElementById('wmDays'),mapNote=document.getElementById('mapNote');
+if(!dest){title.textContent='Plan a trip to see its weather & map';note.textContent='Run a trip above and this section fills with live weather for that destination.';return;}
+title.textContent='Weather & map — '+dest;note.textContent='Loading live weather…';cur.innerHTML='';daysEl.innerHTML='';
+let coords=DEST_COORDS[dest.toLowerCase()]||null;let placeName=dest;
+if(!coords){const g=await geoSearch(dest);if(g){coords=[g[0],g[1]];placeName=g[2];}}
+if(!coords){note.textContent='Could not locate '+dest+' for live weather. Try a researched destination (Goa, Manali, Jaipur, Kerala, Bali, Dubai).';mapNote.textContent='Map unavailable: destination could not be located.';return;}
+try{
+const res=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${coords[0]}&longitude=${coords[1]}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16`);
+const w=await res.json();if(!w.current)throw new Error('no weather');
+const wc=wmo(w.current.weather_code);cur.innerHTML=`<p><strong>Right now in ${esc(placeName)}: ${Math.round(w.current.temperature_2m)}°C ${wc[0]} ${wc[1]}</strong> · Humidity ${w.current.relative_humidity_2m}% · Wind ${w.current.wind_speed_10m} km/h</p>`;
+const tripStart=lastReq&&lastReq.start?lastReq.start:null,tripEnd=lastReq&&lastReq.end?lastReq.end:null;
+let dayIdx=[];if(tripStart&&tripEnd&&w.daily&&w.daily.time){w.daily.time.forEach((d,i)=>{if(d>=tripStart&&d<=tripEnd)dayIdx.push(i);});}
+if(dayIdx.length){note.textContent='Day-wise forecast for your trip dates (Open-Meteo, next 16 days only).';}
+else{note.textContent='Your trip dates are beyond the 16-day forecast window (or this is a saved plan), so here is the current 7-day outlook for packing — check back closer to the trip for date-matched days.';dayIdx=[0,1,2,3,4,5,6].filter(i=>w.daily&&w.daily.time&&i<w.daily.time.length);}
+daysEl.innerHTML=dayIdx.map(i=>{const dc=wmo(w.daily.weather_code[i]);return `<div class="card" style="padding:10px 12px;min-width:130px"><strong>${esc(w.daily.time[i])}</strong><div style="font-size:22px">${dc[0]} ${dc[1]}</div><div>${Math.round(w.daily.temperature_2m_max[i])}° / ${Math.round(w.daily.temperature_2m_min[i])}°C</div><div class="fine">Rain chance ${w.daily.precipitation_probability_max?w.daily.precipitation_probability_max[i]:'—'}%</div></div>`;}).join('');
+lastWeather={dest:placeName,current:w.current,days:dayIdx.map(i=>({date:w.daily.time[i],max:w.daily.temperature_2m_max[i],min:w.daily.temperature_2m_min[i],cond:wmo(w.daily.weather_code[i])[1]}))};
+}catch(e){note.textContent='Live weather could not be loaded right now. Your plan is unaffected — try refreshing.';cur.innerHTML='';daysEl.innerHTML='';}
+if(!window.L){mapNote.textContent='Map could not load — Leaflet CDN unavailable. Try refreshing.';return;}
+try{
+if(quadletMap){quadletMap.remove();quadletMap=null;}
+quadletMap=L.map('tripMap').setView(coords,11);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(quadletMap);
+L.marker(coords).addTo(quadletMap).bindPopup('<strong>'+esc(placeName)+'</strong><br>Trip destination');
+let stops=[];if(p.itinerary)p.itinerary.forEach(d=>d.slots.forEach(s=>stops.push({day:d.day,place:s.place,activity:s.activity})));
+const seen=new Set();stops=stops.filter(s=>{const k=s.place.toLowerCase();if(seen.has(k))return false;seen.add(k);return true;});
+let pinned=0;const bounds=[coords];
+const country={goa:'India',manali:'India',jaipur:'India',kerala:'India',bali:'Indonesia',dubai:'United Arab Emirates'}[dest.toLowerCase()]||'';
+async function geoPlace(place){try{const q=place+', '+dest+(country?', '+country:'');const r=await fetch('https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(q)+'&format=json&limit=1',{headers:{'Accept':'application/json'}});const j=await r.json();if(j[0])return[parseFloat(j[0].lat),parseFloat(j[0].lon)];}catch(e){}return await geoSearch(place);}
+for(let si=0;si<stops.length;si++){const s=stops[si];mapNote.textContent='Locating stops on the map… '+pinned+' pinned so far.';const g=await geoPlace(s.place);if(g){pinned++;bounds.push(g);L.marker(g).addTo(quadletMap).bindPopup('<strong>Day '+s.day+' — '+esc(s.place)+'</strong><br>'+esc(s.activity));}if(si<stops.length-1)await new Promise(r=>setTimeout(r,1100));}
+if(bounds.length>1)quadletMap.fitBounds(bounds,{padding:[30,30]});else quadletMap.setView(coords,11);
+mapNote.textContent=stops.length?`${pinned} of ${stops.length} itinerary stops pinned on the map. Tap a pin for its day and activity. Unlocated stops stay in your day-wise plan above.`:'No itinerary stops to pin for this plan.';
+}catch(e){mapNote.textContent='Map could not be drawn right now. Your plan is unaffected.';}
+}
+// Mili — rule-based helper, grounded only in the current plan (never invents prices or places)
+let miliOpened=false;
+function miliAdd(text,who){const box=document.getElementById('miliMsgs');const d=document.createElement('div');d.className='mili-msg '+(who==='user'?'mili-user':'mili-bot');d.textContent=text;box.appendChild(d);box.scrollTop=box.scrollHeight;}
+function miliReply(q){
+const s=q.toLowerCase().trim();const plan=lastPlan;
+const dests=['goa','manali','jaipur','kerala','bali','dubai'];const hitDest=dests.find(d=>s.includes(d));
+if(s.match(/^(hi|hello|hey|hii|namaste)/)||s.includes('who are you')||s.includes('your name'))return "Hi! I'm Mili, your Quadlet trip helper. 💬 I can explain how Quadlet works, tell you your budget, itinerary, packing list, safety tips, or live weather — all from the plan you just made. Try a chip below, or plan a trip first and ask me about it.";
+if(s.includes('how')&& (s.includes('work')||s.includes('quadlet'))||s.includes('agent'))return "Quadlet works like this: one trip goes in, then 4 agents work in parallel — 🧭 Scout finds places, 🪙 Penny handles the budget, 🗺️ Atlas builds the day-wise plan, 🛡️ Pax checks safety and packing. A Synthesizer merges them into one final plan, and shows every budget cut openly.";
+if(s.includes('budget')||s.includes('cost')||s.includes('price')||s.includes('penny')||s.includes('money')||s.includes('spend')){
+if(!plan||!plan.summary)return "No plan yet — fill the form at the top and press Plan my trip, then ask me again and I'll read your exact budget.";
+let out=`Your budget: total ${plan.summary.total} vs budget ${plan.summary.budget}. Verdict: ${plan.summary.verdict}`;
+if(plan.budget&&plan.budget.rows)out+='\n'+plan.budget.rows.map(r=>r[0]+': '+r[1]).join('\n');
+if(plan.changes&&plan.changes.length)out+='\nChanges made to fit: '+plan.changes.join('; ');
+return out;}
+if(s.includes('itinerary')||s.includes('day')&&s.includes('plan')||s.includes('schedule')||s.includes('atlas')){
+if(!plan||!plan.itinerary)return "No itinerary yet — plan a trip first, then ask me and I'll list it day by day.";
+return plan.itinerary.map(d=>'Day '+d.day+': '+d.slots.map(x=>x.place+' ('+x.slot+')').join(', ')).join('\n');}
+if(s.includes('pack')||s.includes('bag')||s.includes('luggage')||s.includes('pax')){
+if(!plan||!plan.packing)return "No packing list yet — plan a trip first. In general, Pax groups packing into Essentials, Clothes, Tech and Documents.";
+let out='Packing list from your plan:';Object.entries(plan.packing).forEach(([g,items])=>{out+='\n'+g+': '+items.join(', ');});
+const all=document.querySelectorAll('.pack-check');if(all.length)out+='\nYou have packed '+[...all].filter(c=>c.checked).length+' of '+all.length+' items (tick them in the Packing list section).';
+return out;}
+if(s.includes('safe')||s.includes('document')||s.includes('weather')&&s.includes('safe')){
+if(!plan||!plan.safety)return "No safety notes yet — plan a trip first and Pax will check weather, tips and documents for that place.";
+return 'Safety for '+plan.summary.destination+': '+plan.safety.weather+'\nTips: '+plan.safety.tips.join('; ')+'\nDocuments: '+plan.safety.docs.join(', ');}
+if(s.includes('weather')){
+if(!lastWeather)return "No live weather loaded yet — plan a trip and the weather section will load, then ask me again.";
+return `Right now in ${lastWeather.dest}: ${Math.round(lastWeather.current.temperature_2m)}°C, humidity ${lastWeather.current.relative_humidity_2m}%, wind ${lastWeather.current.wind_speed_10m} km/h.\n`+lastWeather.days.map(d=>d.date+': '+Math.round(d.max)+'°/'+Math.round(d.min)+'°C, '+d.cond).join('\n');}
+if(s.includes('place')||s.includes('visit')||s.includes('gem')||s.includes('scout')||s.includes('where')){
+if(!plan||!plan.places)return "Researched destinations are Goa, Manali, Jaipur, Kerala, Bali and Dubai. Other places get a clearly labelled skeleton plan — never invented prices. Plan one and I'll list its places.";
+let out='Places in your plan: '+plan.places.map(x=>x[0]).join(', ');if(plan.gems&&plan.gems.length)out+='\nHidden gems: '+plan.gems.join(', ');return out;}
+if(s.includes('book')||s.includes('flight')||s.includes('hotel')||s.includes('pay'))return "Honest note: Quadlet shows estimates only — nothing here books or charges anything. Use the plan to book directly with the airline, hotel or local provider.";
+if(s.includes('pdf')||s.includes('download'))return "In your final plan, use Copy, Download (.txt) or Download PDF (opens the print dialog — choose Save as PDF).";
+if(hitDest){try{setDestination(hitDest.charAt(0).toUpperCase()+hitDest.slice(1));}catch(e){}return "Done — I've set your destination to "+hitDest.charAt(0).toUpperCase()+hitDest.slice(1)+". Now add your dates, travellers and budget at the top and press Plan my trip, then ask me about the plan.";}
+if(s.includes('destination')||s.includes('where should')||s.includes('suggest'))return "Researched destinations with real data and photos: Goa, Manali, Jaipur, Kerala, Bali and Dubai. Tell me one (e.g. just type 'Goa') and I'll set it in the form for you.";
+return "I can help with: how Quadlet works, your budget, itinerary, packing, safety, places, live weather, or PDF download — all from your current plan. If there's no plan yet, plan a trip first, then ask me about it. Try a chip below.";}
+document.getElementById('miliBtn').addEventListener('click',()=>{const pn=document.getElementById('miliPanel');const open=pn.style.display==='flex';pn.style.display=open?'none':'flex';if(!open&&!miliOpened){miliOpened=true;miliAdd("Hi! I'm Mili 💬 — your Quadlet trip helper. Ask me about your plan, budget, packing, safety or weather, or tap a chip below.",'bot');}});
+document.getElementById('miliClose').addEventListener('click',()=>{document.getElementById('miliPanel').style.display='none';});
+document.querySelectorAll('.mili-chip').forEach(b=>b.addEventListener('click',()=>{document.getElementById('miliInput').value=b.dataset.q;document.getElementById('miliForm').requestSubmit();}));
+document.getElementById('miliForm').addEventListener('submit',e=>{e.preventDefault();const inp=document.getElementById('miliInput');const q=inp.value.trim();if(!q)return;miliAdd(q,'user');inp.value='';setTimeout(()=>miliReply(q),350);});
+
 // API stream
 async function fetchPlan(req){const urls=['/api/plan','https://quadlet.vercel.app/api/plan'];let lastErr=null;for(const url of urls){try{const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(req)});if(!res.ok){lastErr=new Error('Server returned '+res.status+' from '+url);continue;}return res;}catch(e){lastErr=e;continue;}}throw lastErr||new Error('Could not reach the planner API.');}
 document.getElementById('tripForm').addEventListener('submit',async e=>{e.preventDefault();const errEl=document.getElementById('formErr');errEl.hidden=true;const dest=document.getElementById('dest').value.trim(),start=document.getElementById('start').value,end=document.getElementById('end').value,travellers=parseInt(document.getElementById('travellers').value,10),budget=parseFloat(document.getElementById('budget').value),currency=document.getElementById('currency').value,style=document.getElementById('style').value;
