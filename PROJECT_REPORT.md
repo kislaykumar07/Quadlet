@@ -3,7 +3,7 @@
 **Live:** https://quadlet.vercel.app
 **Repo:** https://github.com/kislaykumar07/Quadlet (public, `main`)
 **Current version:** 7.0 — 2026-11-07
-**GitHub head at time of writing:** `ebcea0d0` (v7.0; updated with every push — see the Maintenance section)
+**GitHub head at time of writing:** `8f6b51d` (v7.0; updated with every push — see the Maintenance section)
 
 > **Maintenance rule:** this report is updated after every change, and pushed with the change. A version is not "done" until this file says what changed.
 
@@ -86,7 +86,7 @@ Database (Neon Postgres, project `neon-charcoal-planet`): `quadlet_users`, `quad
 
 - **Vercel project:** `quadlet` (`prj_KEBQz0m1EZxGr3g9JXBHqogyAqrX`). Production deploys only (`target: "production"`, `projectSettings.framework: "fastapi"`). Deploy args are rebuilt from the fresh `refs.json` after every upload — reusing old args silently ships the old build.
 - **Deploy size cliff:** the upload passes each file as base64 inside one CLI arg (128 KB kernel cap), so **every deploy file must stay under ~95 KB raw**. `app.js` is 97,001 bytes raw (base64 129,336 — only ~1.7 KB headroom). The next JS addition MUST be another module split like `compare.js` / `ai.js`. Always curl-check the live version pill after a deploy; an upload failure means nothing shipped.
-- **GitHub:** push after every change (standing rule). Snapshot pushes carry UTF-8 text files only — binary files (`icon-192.png`, `icon-512.png`, `mili-face.jpg`) cannot go through that route and are uploaded via the GitHub web UI instead.
+- **GitHub:** push after every change (standing rule). Snapshot pushes carry UTF-8 text files only — binary files cannot go through that route. The three binaries (`icon-192.png`, `icon-512.png`, `mili-face.jpg`) were uploaded via the GitHub web UI on 2026-11-07 (commit `8f6b51d`) and are now in the repo.
 - **Live check:** after any change, verify on https://quadlet.vercel.app (pill version, Goa ₹33,491, the changed feature).
 
 ## Known limits & open items
