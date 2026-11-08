@@ -24,7 +24,30 @@
 <div id="scrim"></div>
 <aside id="drawer"><div style="display:flex;justify-content:space-between;align-items:center"><strong style="font-family:var(--font-display);letter-spacing:.2em;font-size:14px">STUDIO CONTROLS</strong><button class="iconbtn" id="closeDrawer" aria-label="Close">✕</button></div><p style="font-family:var(--font-mono);font-size:12px;color:#a3a3a3;font-style:italic">Set the hero sphere palette. As you scroll, the scene morphs to volt-lime, then rose-pink as the heart assembles.</p><p style="font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;font-weight:700">✦ HERO PALETTE SHADERS</p><div id="themeCards"></div><p style="font-family:var(--font-mono);font-size:9px;color:#a3a3a3">RENDER ENGINE / THREE.JS WEBGL<br>DYNAMICS SOLVER / 3D COLLISION VERLET</p><button class="btn2" id="resetTheme">↺ Reset Defaults</button></aside>
 <main>
-<section class="hero" id="planner"><div class="hero-row"><div><div class="eyebrow">[ Quadlet · Trip Planner ]</div><h1 class="hero-title">One trip.<br>Four agents. One plan.</h1><div style="margin-top:18px"><span class="version">Quadlet Gravity v7.3</span></div><div style="margin-top:14px"><a href="/agents#watch" style="color:#fff;text-decoration:underline;text-underline-offset:4px;font-family:var(--font-raleway);font-size:15px">▶ Watch how it works — 1 min 41 s</a></div></div></div>
+<section class="hero" id="planner"><div class="hero-row"><div><div class="eyebrow">[ Quadlet · Trip Planner ]</div><h1 class="hero-title">One trip.<br>Four agents. One plan.</h1><div style="margin-top:18px"><span class="version">Quadlet Gravity v7.3</span></div></div></div>
+<section id="watch" style="margin-top:28px;scroll-margin-top:1rem">
+<p class="eyebrow">[ New here? Start here ]</p>
+<h2 style="font-size:26px;margin:8px 0 0">Watch how Quadlet works — in 1 minute 41 seconds</h2>
+<p class="lead reveal" style="margin-top:12px;max-width:34rem">What Quadlet is, and the six steps from a trip idea to a finished plan — with diagrams, narrated.</p>
+<div class="card" style="padding:0;overflow:hidden">
+<div style="position:relative;background:#000;overflow:hidden">
+<img id="watch-img" src="/watch/slide1.jpg" alt="Quadlet explainer video frame" style="display:block;width:100%;aspect-ratio:16/9;object-fit:cover">
+<button id="watch-bigplay" aria-label="Play the explainer video" style="position:absolute;inset:0;margin:auto;width:84px;height:84px;border-radius:99px;border:0;background:rgba(14,42,197,.92);color:#fff;font-size:2rem;cursor:pointer">▶</button>
+</div>
+<div style="padding:16px 20px 20px">
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<button id="watch-play" class="btn">▶ Play</button>
+<button id="watch-prev" class="btn2">‹ Prev</button>
+<button id="watch-next" class="btn2">Next ›</button>
+<span id="watch-count" class="mono" style="font-size:13px;color:#404040">1 / 8</span>
+<span id="watch-title" style="font-size:15px;font-weight:600">Meet Quadlet</span>
+</div>
+<div style="height:8px;border-radius:99px;background:#e5e5e5;overflow:hidden;margin-top:16px"><div id="watch-bar" style="height:100%;width:0%;background:#0E2AC5;border-radius:99px"></div></div>
+<audio id="watch-audio" preload="none"></audio>
+</div>
+</div>
+<p class="fine" style="margin-top:14px">Transcript: Meet Quadlet — a trip planner where four AI agents build your trip together. One trip goal in, one finished plan out. Here is how it works, in about a minute. First, tell Quadlet your trip: where you want to go, your dates, how many people, your budget, and your travel style. Or just type one sentence — like, Goa with family, five days, forty thousand rupees — and Quadlet fills the whole form for you. Then four agents get to work on your trip at the same time. Scout finds the real places. Penny plans the money. Atlas builds the day-by-day plan. And Pax checks safety and packing. Each one works on its own part, so nothing waits for anything else. Then the Synthesizer merges all four into one final plan. If the trip is over budget, it cuts the priciest activities first, steps the stay down one level, then switches food to local options — and it tells you every single change. You get a day-wise plan with real places, a full budget breakdown, a packing checklist, and safety tips. Every price is a real estimate from Quadlet's researched data. Nothing is invented. Then manage it your way. Track spending on the Dashboard, save trips to My Trips, download a calendar, check flights and stays, plan with friends and vote on activities, and split expenses fairly. Stuck? Ask Mili. She answers only from your trips — your plan, your packing, your budget — and never invents places or prices. Or describe a mood, and Vibe search finds the destination that fits it. Quadlet is free to try. Pick a destination, press Plan my trip, and let your four agents get to work. Quadlet dot vercel dot app.</p>
+</section>
 <div class="card" id="aiBox" style="margin-top:16px;pointer-events:auto">
 <h2 style="font-size:20px;margin:0">Ask Mili — plan with AI</h2>
 <div style="margin-top:12px"><label for="talkInput">Plan by talking</label><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><input id="talkInput" style="flex:1;min-width:220px" maxlength="200" placeholder="e.g. 4-day beach trip under ₹30,000 with my two kids"><button class="btn" id="talkBtn" type="button">Plan it</button></div><p class="fine" id="talkMsg"></p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn2" type="button" data-talk="4-day beach trip under ₹30,000 with my two kids">🏖️ 4-day beach trip · ₹30,000</button><button class="btn2" type="button" data-talk="Goa with family, 5 days, ₹40,000">👨‍👩‍👧 Goa family · 5 days</button></div></div>
