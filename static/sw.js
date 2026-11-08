@@ -1,9 +1,9 @@
 /* Quadlet PWA service worker (v6.4).
    App shell cached for offline use; API calls always go to the network. */
-const CACHE = 'quadlet-v7.2';
+const CACHE = 'quadlet-v7.3';
 const SHELL = ['/', '/trips', '/dashboard', '/agents',
-  '/style.css?v=7.2', '/app.js?v=7.2', '/nearby-ics.js?v=7.2', '/compare.js?v=7.2', '/ai.js?v=7.2', '/travel-links.js?v=7.2', '/destinations.js?v=7.2',
-  '/mili-face.jpg?v=3.6', '/manifest.json', '/icon-192.png', '/icon-512.png'];
+  '/style.css?v=7.3', '/app.js?v=7.3', '/nearby-ics.js?v=7.2', '/compare.js?v=7.2', '/ai.js?v=7.2', '/travel-links.js?v=7.2', '/destinations.js?v=7.2', '/watch.js?v=7.3',
+  '/mili-face.jpg?v=3.6', '/watch/slide1.jpg', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

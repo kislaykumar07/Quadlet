@@ -2,7 +2,7 @@
 
 **Live:** https://quadlet.vercel.app
 **Repo:** https://github.com/kislaykumar07/Quadlet (public, `main`)
-**Current version:** 7.2 — 2026-11-08
+**Current version:** 7.3 — 2026-11-08
 **GitHub head at time of writing:** `cd62d89` (v7.1+v7.2; updated with every push — see the Maintenance section)
 
 > **Maintenance rule:** this report is updated after every change, and pushed with the change. A version is not "done" until this file says what changed.
@@ -28,7 +28,9 @@ Quadlet is a trip planner built around four AI agents that work in parallel on o
 | `dashboard.html` | Dashboard — budget bars, donut, per-day spend, timeline, countdown |
 | `agents.html` | Agents — the four agents + how synthesis works + Mili intro |
 | `style.css` | All shared styles |
-| `app.js` | Main logic (94,558 bytes after the v7.2 destinations split; see Deployment) |
+| `app.js` | Main logic (94,615 bytes; see Deployment) |
+| `watch.js` | v7.3 Explainer-video player (slides + narration, Play/Prev/Next, progress bar, Ken Burns zoom) |
+| `watch/` | v7.3 Explainer assets: 8 diagram slides (`slideN.jpg`, 40–58 KB) + 8 narration clips (`slideN.mp3`, 32k, 35–62 KB) |
 | `ai.js` | v7.0 AI features (talk, vibe, taste, smart packing, route optimizer) |
 | `travel-links.js` | v7.1 Flights & stays links (URL builders, airport codes, home-airport field) |
 | `destinations.js` | v7.2 Researched-destination list + gallery/chips UI (split out of app.js — deploy size cap) |
@@ -74,6 +76,7 @@ Database (Neon Postgres, project `neon-charcoal-planet`): `quadlet_users`, `quad
 | **7.0** | **2026-11-07** | **AI release — Plan by talking, Taste learning, Vibe search, Smart packing, Route optimizer** |
 | **7.1** | **2026-11-07** | **Flights & stays search links — per-city Google Flights / Skyscanner (home airport) / Booking.com / Google Hotels, airport codes, home-airport field; Delhi → DEL added after the browser check** |
 | **7.2** | **2026-11-08** | **5 more destinations → 16 researched total (Shimla, Darjeeling, Amritsar, Hampi, Maldives) with Pexels photos, VIBE tags + months, airport codes (SLV / IXB / ATQ / HBX / MLE), DEST_COORDS; destination list/gallery split into `destinations.js` (app.js 97,189 → 94,558 bytes)** |
+| **7.3** | **2026-11-08** | **Explainer video "Watch how Quadlet works" (1 min 41 s, 8 slides + narrated voiceover): PIL-rendered diagram slides (4-agent flow, Synthesizer, budget rule, plan card, Mili chat) with real Goa/Maldives photos; slides + 32k MP3 narration play back as a video on the Agents page (new `watch.js` player: Play/Prev/Next, progress, Ken Burns zoom, transcript) + "Watch how it works" link on Home; full MP4 also built (`~/workspace/quadlet-video/quadlet-explainer.mp4`, 5.0 MB — too big to deploy, shared as a file). Source: `~/workspace/quadlet-video/` (`render_slides.py`, `narrate.py`, `make_video.sh`). Browser check PASSED (2026-11-08): all 6 checks — Home link, player UI, auto-advance, Next/Prev, page health, Goa ₹33,491. Minor nits: big play button overlaps slide text while paused (standard video-player behaviour, vanishes on play); lime spheres drift behind the transcript (Gravity background, text stays readable). Data correction (same version, redeployed): Shimla toy train — since 30 Aug 2026 the trains run Dharampur–Shimla only (landslide damage near Bridge No. 57; Kalka stretch suspended till Nov 30, verified against Tribune India / Financial Express / HelloRail) — the Shimla transport line now carries that note with a check-IRCTC pointer, instead of presenting the full Kalka–Shimla ride with no caveat; Darjeeling wording fixed (Happy Valley is now "one of Darjeeling's oldest tea gardens (est. 1854)" instead of "150-year-old"). Totals unchanged by the correction (text only).** |
 
 ## Canonical test values (must not regress)
 
@@ -90,7 +93,7 @@ Database (Neon Postgres, project `neon-charcoal-planet`): `quadlet_users`, `quad
 ## Deployment
 
 - **Vercel project:** `quadlet` (`prj_KEBQz0m1EZxGr3g9JXBHqogyAqrX`). Production deploys only (`target: "production"`, `projectSettings.framework: "fastapi"`). Deploy args are rebuilt from the fresh `refs.json` after every upload — reusing old args silently ships the old build.
-- **Deploy size cliff:** the upload passes each file as base64 inside one CLI arg (128 KB kernel cap), so **every deploy file must stay under ~95 KB raw**. `app.js` was 97,189 bytes raw in v7.1 (base64 129,588 — only ~1.5 KB headroom), so v7.2 split the destination list/gallery into `destinations.js` (4,202 bytes); `app.js` is now 94,558 bytes. The next JS addition MUST be another module split like `destinations.js` / `compare.js` / `ai.js`. Always curl-check the live version pill after a deploy; an upload failure means nothing shipped.
+- **Deploy size cliff:** the upload passes each file as base64 inside one CLI arg (128 KB kernel cap), so **every deploy file must stay under ~95 KB raw**. `app.js` was 97,189 bytes raw in v7.1 (base64 129,588 — only ~1.5 KB headroom), so v7.2 split the destination list/gallery into `destinations.js` (4,202 bytes); `app.js` is now 94,615 bytes (v7.3 added only the watch import + `initWatch()` call). The next JS addition MUST be another module split like `destinations.js` / `compare.js` / `ai.js` / `watch.js`. The v7.3 explainer ships as 16 small files (8 JPGs + 8 MP3s, each 35–62 KB) instead of one MP4 — the full MP4 (5.0 MB) can never be deployed this way. Always curl-check the live version pill after a deploy; an upload failure means nothing shipped.
 - **GitHub:** push after every change (standing rule). Snapshot pushes carry UTF-8 text files only — binary files cannot go through that route. The three binaries (`icon-192.png`, `icon-512.png`, `mili-face.jpg`) were uploaded via the GitHub web UI on 2026-11-07 (commit `8f6b51d`) and are now in the repo.
 - **Live check:** after any change, verify on https://quadlet.vercel.app (pill version, Goa ₹33,491, the changed feature).
 

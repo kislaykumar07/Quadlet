@@ -193,8 +193,10 @@ import {initCompare} from './compare.js?v=7.1';
 import {initAI} from './ai.js?v=7.1';
 import {initTravel} from './travel-links.js?v=7.2';
 import {RESEARCHED,buildDestinations} from './destinations.js?v=7.2';
+import {initWatch} from './watch.js?v=7.3';
 const _travel=initTravel({esc});
 const _ai=initAI({esc,setDestination,getPlan:()=>lastPlan,getForecast:()=>lastWeather,getGeo:()=>lastGeo,saveCurrentPlan});
+initWatch();
 function saveCurrentPlan(){if(lastPlan){savePlan(lastPlan);try{uploadPlanToCloud(lastPlan);}catch(e){}}}
 const _compare=initCompare({getAllTrips,esc,parseMoney});
 function buildICS(p){return _buildICS(p,lastReq);}

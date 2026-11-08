@@ -179,3 +179,11 @@ section.page{min-height:auto;padding-bottom:32px}
 .taste-chip.taste-dislike{background:#fee2e2;border-color:#dc2626;color:#b91c1c}
 .vibe-card{padding:14px;margin:8px 0}
 #aiBox input{font-family:var(--font-raleway)}
+
+/* Watch player (explainer video): slow zoom per slide, fade between slides */
+#watch-img{transition:opacity .22s ease}
+#watch-img.swap{opacity:0}
+#watch-title{transition:opacity .22s ease}
+#watch-title.swapT{opacity:0}
+@keyframes watchZoom{from{transform:scale(1)}to{transform:scale(1.08)}}
+#watch-img.kb{animation-name:watchZoom;animation-timing-function:linear;animation-fill-mode:forwards;transform-origin:center}

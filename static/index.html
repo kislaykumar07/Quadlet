@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="Quadlet">
 <link rel="apple-touch-icon" href="/icon-192.png">
 
-<link rel="stylesheet" href="/style.css?v=7.2"></head>
+<link rel="stylesheet" href="/style.css?v=7.3"></head>
 <body>
 <div id="bgLayer"></div>
 <div id="webgl"><canvas id="scene"></canvas></div>
@@ -24,7 +24,7 @@
 <div id="scrim"></div>
 <aside id="drawer"><div style="display:flex;justify-content:space-between;align-items:center"><strong style="font-family:var(--font-display);letter-spacing:.2em;font-size:14px">STUDIO CONTROLS</strong><button class="iconbtn" id="closeDrawer" aria-label="Close">✕</button></div><p style="font-family:var(--font-mono);font-size:12px;color:#a3a3a3;font-style:italic">Set the hero sphere palette. As you scroll, the scene morphs to volt-lime, then rose-pink as the heart assembles.</p><p style="font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;font-weight:700">✦ HERO PALETTE SHADERS</p><div id="themeCards"></div><p style="font-family:var(--font-mono);font-size:9px;color:#a3a3a3">RENDER ENGINE / THREE.JS WEBGL<br>DYNAMICS SOLVER / 3D COLLISION VERLET</p><button class="btn2" id="resetTheme">↺ Reset Defaults</button></aside>
 <main>
-<section class="hero" id="planner"><div class="hero-row"><div><div class="eyebrow">[ Quadlet · Trip Planner ]</div><h1 class="hero-title">One trip.<br>Four agents. One plan.</h1><div style="margin-top:18px"><span class="version">Quadlet Gravity v7.2</span></div></div></div>
+<section class="hero" id="planner"><div class="hero-row"><div><div class="eyebrow">[ Quadlet · Trip Planner ]</div><h1 class="hero-title">One trip.<br>Four agents. One plan.</h1><div style="margin-top:18px"><span class="version">Quadlet Gravity v7.3</span></div><div style="margin-top:14px"><a href="/agents#watch" style="color:#fff;text-decoration:underline;text-underline-offset:4px;font-family:var(--font-raleway);font-size:15px">▶ Watch how it works — 1 min 41 s</a></div></div></div>
 <div class="card" id="aiBox" style="margin-top:16px;pointer-events:auto">
 <h2 style="font-size:20px;margin:0">Ask Mili — plan with AI</h2>
 <div style="margin-top:12px"><label for="talkInput">Plan by talking</label><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><input id="talkInput" style="flex:1;min-width:220px" maxlength="200" placeholder="e.g. 4-day beach trip under ₹30,000 with my two kids"><button class="btn" id="talkBtn" type="button">Plan it</button></div><p class="fine" id="talkMsg"></p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn2" type="button" data-talk="4-day beach trip under ₹30,000 with my two kids">🏖️ 4-day beach trip · ₹30,000</button><button class="btn2" type="button" data-talk="Goa with family, 5 days, ₹40,000">👨‍👩‍👧 Goa family · 5 days</button></div></div>
@@ -94,4 +94,4 @@
 <div style="display:flex;gap:6px;flex-wrap:wrap;padding:0 12px 8px"><button class="mili-chip" data-q="How do I plan a trip?">Plan a trip?</button><button class="mili-chip" data-q="How does Quadlet work?">How does Quadlet work?</button><button class="mili-chip" data-q="What is my budget?">My budget?</button><button class="mili-chip" data-q="What should I pack?">Packing?</button><button class="mili-chip" data-q="Show my itinerary">Itinerary</button><button class="mili-chip" data-q="What is the weather?">Weather?</button><button class="mili-chip" data-q="What trips have I planned before?">My trips?</button></div>
 <form id="miliForm" style="display:flex;gap:8px;padding:12px;border-top:1px solid #e5e7eb"><input id="miliInput" style="flex:1;padding:11px 14px;border:1px solid #d1d5db;border-radius:999px;outline:none" placeholder="Ask Mili about your trip…"><button aria-label="Send" style="border:none;border-radius:50%;width:40px;height:40px;flex-shrink:0;background:#0E2AC5;color:#fff;font-size:18px;font-weight:700;cursor:pointer">↑</button></form>
 </div>
-<script type="module" src="/app.js?v=7.2"></script></body></html>
+<script type="module" src="/app.js?v=7.3"></script></body></html>
