@@ -2,7 +2,7 @@
 
 **Live:** https://quadlet.vercel.app
 **Repo:** https://github.com/kislaykumar07/Quadlet
-**Current version:** 7.0 (2026-11-07)
+**Current version:** 7.2 (2026-11-08)
 
 One trip goal in. Four separate agents work on four different parts of that trip in parallel, then a Synthesizer merges them into one final, ready-to-use trip plan. Mili, the chatbot, answers questions from your actual trips.
 
@@ -16,7 +16,7 @@ One trip goal in. Four separate agents work on four different parts of that trip
 ## Features
 
 - **4 pages:** Home (planner + plan + live agent arena + weather/map), My Trips, Dashboard, Agents
-- **11 researched destinations** — Goa, Manali, Jaipur, Kerala, Bali, Dubai, Udaipur, Varanasi, Rishikesh, Singapore, Thailand — with curated data and photos. Any other destination gets a clearly labelled skeleton plan (ranges only, never invented prices)
+- **16 researched destinations** — Goa, Manali, Jaipur, Kerala, Bali, Dubai, Udaipur, Varanasi, Rishikesh, Singapore, Thailand, Shimla, Darjeeling, Amritsar, Hampi, Maldives — with curated data and photos. Any other destination gets a clearly labelled skeleton plan (ranges only, never invented prices)
 - **Multi-city routes:** type "Delhi → Jaipur → Agra", days and budget split per city, honest partial totals
 - **Group trips:** friends join via the share link, vote 👍/👎 on ticketed activities (an activity drops only when drop votes beat keep votes), total split equally; the group plan is a derived view, the owner's saved plan is never mutated
 - **Expense tracker:** add spending on any saved trip, who-owes-whom table, delete by adder or trip owner
@@ -26,6 +26,8 @@ One trip goal in. Four separate agents work on four different parts of that trip
 - **Nearby places** for unresearched destinations: real places from Wikipedia geosearch (server-side, 10 km, top 8, no prices)
 - **PWA:** installable, works offline for the shell; Install button in the header on every page
 - **Accounts:** email + password and Google sign-in, cloud trips (Neon Postgres), shareable trip links (public view, unshare stops it)
+- **Flights & stays search links (v7.1):** per-city flight + hotel search links, pre-filled from the plan — Google Flights, Skyscanner (needs a home airport, set once in the section), Booking.com, Google Hotels. Outbound links only, opening in a new tab; nothing books inside Quadlet. Airport codes shown for researched destinations (e.g. fly into GOI for Goa)
+- **More destinations (v7.2):** 5 new researched destinations — Shimla, Darjeeling, Amritsar, Hampi, Maldives — 16 researched total, each with curated data, photos and airport codes (SLV, IXB, ATQ, HBX, MLE). The destination list/gallery now lives in its own module (`destinations.js`) because `app.js` hit the deploy size cap.
 - **AI features (v7.0):** Plan by talking (one sentence fills the form and plans), Taste learning (like/dislike chips shape which activities get picked and cut first), Vibe search (describe a mood, get ranked destinations), Smart packing (extra items from your real forecast + itinerary), Route optimizer (each day's stops reordered by real map distance)
 - **Mili:** face-avatar chatbot, answers grounded only in your current plan, saved trips, packing progress, habits and live weather; never invents prices or places; local rules answer when the LLM is offline
 
@@ -36,7 +38,7 @@ If the initial estimate is over budget, it first cuts the priciest activities, t
 ## Tech stack
 
 - **Backend:** FastAPI (Python) — `app.py` / `data.py`, streaming plan endpoint, SQLite-free cloud persistence via Neon Postgres
-- **Frontend:** static Gravity-style pages (`static/`) — Three.js gravity-field spheres, scroll physics, palette morph, one shared `app.js` plus small modules (`ai.js`, `compare.js`, `nearby-ics.js`)
+- **Frontend:** static Gravity-style pages (`static/`) — Three.js gravity-field spheres, scroll physics, palette morph, one shared `app.js` plus small modules (`ai.js`, `compare.js`, `nearby-ics.js`, `travel-links.js`, `destinations.js`)
 - **Hosting:** Vercel (project `quadlet`)
 - **LLM:** Gemini first (3.6-flash, then 3.8-flash), then Groq, then xAI — keys only from environment variables, never stored; every AI endpoint falls back to honest rules when no provider answers
 - **Maps & weather:** Leaflet + OpenStreetMap/Nominatim, Open-Meteo
@@ -63,7 +65,7 @@ Optional environment variables (all read from the environment only, never from u
 
 ## Data and honest limits
 
-Curated researched data for the 11 destinations is in `data.py`. All prices are planning estimates, not live bookable prices. Nothing here books or charges anything — there is deliberately no live flight/hotel booking inside Quadlet. Destinations outside the researched set get a skeleton plan with ranges only.
+Curated researched data for the 16 destinations is in `data.py`. All prices are planning estimates, not live bookable prices. Nothing here books or charges anything — there is deliberately no live flight/hotel booking inside Quadlet. Destinations outside the researched set get a skeleton plan with ranges only.
 
 ## Project report
 

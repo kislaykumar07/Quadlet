@@ -2,7 +2,7 @@
 
 **Live:** https://quadlet.vercel.app
 **Repo:** https://github.com/kislaykumar07/Quadlet (public, `main`)
-**Current version:** 7.0 — 2026-11-07
+**Current version:** 7.2 — 2026-11-08
 **GitHub head at time of writing:** `8f6b51d` (v7.0; updated with every push — see the Maintenance section)
 
 > **Maintenance rule:** this report is updated after every change, and pushed with the change. A version is not "done" until this file says what changed.
@@ -28,8 +28,10 @@ Quadlet is a trip planner built around four AI agents that work in parallel on o
 | `dashboard.html` | Dashboard — budget bars, donut, per-day spend, timeline, countdown |
 | `agents.html` | Agents — the four agents + how synthesis works + Mili intro |
 | `style.css` | All shared styles |
-| `app.js` | Main logic (97,001 bytes — at the deploy size cap; see Deployment) |
+| `app.js` | Main logic (94,558 bytes after the v7.2 destinations split; see Deployment) |
 | `ai.js` | v7.0 AI features (talk, vibe, taste, smart packing, route optimizer) |
+| `travel-links.js` | v7.1 Flights & stays links (URL builders, airport codes, home-airport field) |
+| `destinations.js` | v7.2 Researched-destination list + gallery/chips UI (split out of app.js — deploy size cap) |
 | `compare.js` | Compare saved trips |
 | `nearby-ics.js` | Nearby-places hint + calendar (.ics) export |
 | `manifest.json`, `sw.js` | PWA manifest + service worker |
@@ -70,6 +72,8 @@ Database (Neon Postgres, project `neon-charcoal-planet`): `quadlet_users`, `quad
 | 6.5 | 2026-11-07 | Install button moved into the header, always visible |
 | 6.6 | 2026-11-07 | Compare saved trips |
 | **7.0** | **2026-11-07** | **AI release — Plan by talking, Taste learning, Vibe search, Smart packing, Route optimizer** |
+| **7.1** | **2026-11-07** | **Flights & stays search links — per-city Google Flights / Skyscanner (home airport) / Booking.com / Google Hotels, airport codes, home-airport field; Delhi → DEL added after the browser check** |
+| **7.2** | **2026-11-08** | **5 more destinations → 16 researched total (Shimla, Darjeeling, Amritsar, Hampi, Maldives) with Pexels photos, VIBE tags + months, airport codes (SLV / IXB / ATQ / HBX / MLE), DEST_COORDS; destination list/gallery split into `destinations.js` (app.js 97,189 → 94,558 bytes)** |
 
 ## Canonical test values (must not regress)
 
@@ -77,6 +81,7 @@ Database (Neon Postgres, project `neon-charcoal-planet`): `quadlet_users`, `quad
 - Manali 4-day, 20–23 Dec, 2 travellers, ₹30,000 → **₹29,960**
 - Jaipur → ₹24,289 / ₹25,000; Bali $1,289 / $800 (honestly still over); Dubai ₹104,860 / ₹40,000 (honestly still over)
 - Multi-city Delhi → Jaipur → Agra, 6 days, ₹40,000, Culture → ₹14,980 partial (Jaipur only)
+- New destinations (4 days, 2 travellers, Culture, History+Food interests): Shimla ₹27,499 / ₹30,000, Darjeeling ₹25,359 / ₹30,000, Amritsar ₹24,182 / ₹30,000, Hampi ₹20,116 / ₹30,000; Maldives ₹88,596 / ₹100,000 (intl — passport + visa-on-arrival docs in the plan)
 - Group trip Goa ₹48,899 → dolphin trip voted out → ₹46,973, ₹23,486 each
 - Expenses: ₹2,000 + ₹1,000 = ₹3,000, ₹1,500 each, friend owes ₹500
 - Nearby: Ujjain 7 places (Mahakaleshwar Jyotirlinga 0.8 km first), Orchha 5; Goa has no nearby section
@@ -85,7 +90,7 @@ Database (Neon Postgres, project `neon-charcoal-planet`): `quadlet_users`, `quad
 ## Deployment
 
 - **Vercel project:** `quadlet` (`prj_KEBQz0m1EZxGr3g9JXBHqogyAqrX`). Production deploys only (`target: "production"`, `projectSettings.framework: "fastapi"`). Deploy args are rebuilt from the fresh `refs.json` after every upload — reusing old args silently ships the old build.
-- **Deploy size cliff:** the upload passes each file as base64 inside one CLI arg (128 KB kernel cap), so **every deploy file must stay under ~95 KB raw**. `app.js` is 97,001 bytes raw (base64 129,336 — only ~1.7 KB headroom). The next JS addition MUST be another module split like `compare.js` / `ai.js`. Always curl-check the live version pill after a deploy; an upload failure means nothing shipped.
+- **Deploy size cliff:** the upload passes each file as base64 inside one CLI arg (128 KB kernel cap), so **every deploy file must stay under ~95 KB raw**. `app.js` was 97,189 bytes raw in v7.1 (base64 129,588 — only ~1.5 KB headroom), so v7.2 split the destination list/gallery into `destinations.js` (4,202 bytes); `app.js` is now 94,558 bytes. The next JS addition MUST be another module split like `destinations.js` / `compare.js` / `ai.js`. Always curl-check the live version pill after a deploy; an upload failure means nothing shipped.
 - **GitHub:** push after every change (standing rule). Snapshot pushes carry UTF-8 text files only — binary files cannot go through that route. The three binaries (`icon-192.png`, `icon-512.png`, `mili-face.jpg`) were uploaded via the GitHub web UI on 2026-11-07 (commit `8f6b51d`) and are now in the repo.
 - **Live check:** after any change, verify on https://quadlet.vercel.app (pill version, Goa ₹33,491, the changed feature).
 
@@ -96,8 +101,9 @@ Database (Neon Postgres, project `neon-charcoal-planet`): `quadlet_users`, `quad
 - Groq is parked (three keys all returned 403 while the Playground worked — Groq-side permission restriction, not code). Gemini is the live LLM provider.
 - In-browser Mili LLM calls are occasionally flaky (API side verified); the local fallback now behaves correctly.
 - After a reload, Home shows "No plan yet" — the plan is safe in My Trips, it just isn't re-opened automatically (owner left this as-is, 2026-11-07).
-- Unpicked ideas: flight & hotel search links, shareable trip poster.
+- Unpicked ideas: shareable trip poster. (Flight & hotel search links shipped as v7.1.)
 - No live flight/hotel booking inside Quadlet — deliberate, by design.
+- Flights & stays providers are Google Flights, Skyscanner (needs a home airport set in the section), Booking.com and Google Hotels — all verified live 2026-11-07. MakeMyTrip and Agoda are NOT linked: MMT was unreachable and its city codes unverified, Agoda needs numeric city IDs. Google auto-fills a flight origin from the visitor's location (Darbhanga in the browser check) — Quadlet's links carry no origin. Skyscanner sometimes shows a captcha first; it proceeds on its own.
 
 ## Maintenance
 

@@ -60,6 +60,11 @@ input,select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rg
 .chip.active,.pill.active{background:#0a0a0a;color:#fff;border-color:#0a0a0a}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 22px;border-radius:999px;border:none;background:#0E2AC5;color:#fff;font-family:var(--font-raleway);font-weight:600;cursor:pointer}
 .btn:disabled{opacity:.6;cursor:wait}.btn2{padding:10px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.4);cursor:pointer;font-family:var(--font-raleway)}
+.travel-city{border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:14px;margin:10px 0;background:rgba(255,255,255,.5)}
+.travel-links{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.travel-home{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.travel-home input{padding:8px 12px;border-radius:999px;border:1px solid rgba(0,0,0,.15);background:rgba(255,255,255,.7);font-family:var(--font-raleway)}
+.travel-off{opacity:.45;cursor:not-allowed}
 .err{color:#b91c1c;font-family:var(--font-raleway);font-size:14px;margin-top:12px}.fine{font-size:12px;color:#525252}
 .agents{display:grid;grid-template-columns:1fr;gap:14px;margin-top:20px}
 @media(min-width:768px){.agents{grid-template-columns:repeat(2,1fr)}}
