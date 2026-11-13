@@ -1355,4 +1355,16 @@ async def dashboard_page():
 async def agents_page():
     return FileResponse(Path(__file__).parent / "static" / "agents.html")
 
+@app.get("/privacy")
+async def privacy_page():
+    return FileResponse(Path(__file__).parent / "static" / "privacy.html")
+
+@app.get("/terms")
+async def terms_page():
+    return FileResponse(Path(__file__).parent / "static" / "terms.html")
+
+@app.get("/cookies")
+async def cookies_page():
+    return FileResponse(Path(__file__).parent / "static" / "cookies.html")
+
 app.mount("/", StaticFiles(directory=Path(__file__).parent / "static", html=True), name="static")
