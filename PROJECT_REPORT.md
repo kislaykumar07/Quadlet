@@ -3,7 +3,7 @@
 **Live:** https://quadlet.vercel.app
 **Repo:** https://github.com/kislaykumar07/Quadlet (public, `main`)
 **Current version:** 7.5 — 2026-11-13
-**GitHub head at time of writing:** `1c0fc61` (v7.4 report-head push; updated with every push — see the Maintenance section)
+**GitHub head at time of writing:** `8064332` (v7.5 push; updated with every push — see the Maintenance section)
 
 > **Maintenance rule:** this report is updated after every change, and pushed with the change. A version is not "done" until this file says what changed.
 
