@@ -187,3 +187,6 @@ section.page{min-height:auto;padding-bottom:32px}
 #watch-title.swapT{opacity:0}
 @keyframes watchZoom{from{transform:scale(1)}to{transform:scale(1.08)}}
 #watch-img.kb{animation-name:watchZoom;animation-timing-function:linear;animation-fill-mode:forwards;transform-origin:center}
+/* Watch player size + position: keep it a modest centred block, not full-width */
+#watch .card{max-width:720px;margin-left:auto;margin-right:auto}
+#watch p.fine{max-width:720px;margin-left:auto;margin-right:auto}

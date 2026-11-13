@@ -2,7 +2,7 @@
 
 **Live:** https://quadlet.vercel.app
 **Repo:** https://github.com/kislaykumar07/Quadlet
-**Current version:** 7.3 (2026-11-08)
+**Current version:** 7.4 (2026-11-10)
 
 One trip goal in. Four separate agents work on four different parts of that trip in parallel, then a Synthesizer merges them into one final, ready-to-use trip plan. Mili, the chatbot, answers questions from your actual trips.
 
@@ -28,7 +28,8 @@ One trip goal in. Four separate agents work on four different parts of that trip
 - **Accounts:** email + password and Google sign-in, cloud trips (Neon Postgres), shareable trip links (public view, unshare stops it)
 - **Flights & stays search links (v7.1):** per-city flight + hotel search links, pre-filled from the plan — Google Flights, Skyscanner (needs a home airport, set once in the section), Booking.com, Google Hotels. Outbound links only, opening in a new tab; nothing books inside Quadlet. Airport codes shown for researched destinations (e.g. fly into GOI for Goa)
 - **More destinations (v7.2):** 5 new researched destinations — Shimla, Darjeeling, Amritsar, Hampi, Maldives — 16 researched total, each with curated data, photos and airport codes (SLV, IXB, ATQ, HBX, MLE). The destination list/gallery now lives in its own module (`destinations.js`) because `app.js` hit the deploy size cap.
-- **Explainer video (v7.3):** "Watch how Quadlet works" — a 1 min 41 s narrated tour on the Agents page (linked from Home) that explains how to use the site with diagrams: the form, the four agents working in parallel, the Synthesizer, the budget rule, the final plan, managing a trip, and asking Mili. Ships as 8 diagram slides + 8 voiceover clips in a `watch.js` player (Play/Prev/Next, progress bar, transcript) — a single MP4 can't be deployed, so the full MP4 is a shareable file instead.
+- **Explainer video (v7.3):** "Watch how Quadlet works" — a 1 min 41 s narrated tour that explains how to use the site with diagrams: the form, the four agents working in parallel, the Synthesizer, the budget rule, the final plan, managing a trip, and asking Mili. It plays on Home (below the "Plan my trip" form) and on the Agents page. Ships as 8 diagram slides + 8 voiceover clips in a `watch.js` player (Play/Prev/Next, progress bar, transcript) — a single MP4 can't be deployed, so the full MP4 is a shareable file instead.
+- **Smaller video player (v7.4):** the Watch player is a modest centred block (720px max-width) instead of stretching full-width, so it sits neatly in the page design.
 - **AI features (v7.0):** Plan by talking (one sentence fills the form and plans), Taste learning (like/dislike chips shape which activities get picked and cut first), Vibe search (describe a mood, get ranked destinations), Smart packing (extra items from your real forecast + itinerary), Route optimizer (each day's stops reordered by real map distance)
 - **Mili:** face-avatar chatbot, answers grounded only in your current plan, saved trips, packing progress, habits and live weather; never invents prices or places; local rules answer when the LLM is offline
 
