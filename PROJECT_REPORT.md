@@ -3,7 +3,7 @@
 **Live:** https://quadlet.vercel.app
 **Repo:** https://github.com/kislaykumar07/Quadlet (public, `main`)
 **Current version:** 7.4 — 2026-11-10
-**GitHub head at time of writing:** `7d02679c` (v7.3 video-move report push; updated with every push — see the Maintenance section)
+**GitHub head at time of writing:** `fc08029e` (v7.4 push; updated with every push — see the Maintenance section)
 
 > **Maintenance rule:** this report is updated after every change, and pushed with the change. A version is not "done" until this file says what changed.
 
